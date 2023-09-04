@@ -18,18 +18,26 @@ class SVM():
             self.gradient_descent()
 
     def gradient_descent(self):
+        y_label = np.where(self.Y <= 0, -1, 1)
 
-        y_cap = np.where(self.Y <= 0, -1, 1)
+        # gradients ( dw, db)
+        for index, x_i in enumerate(self.X):
 
-        if y_cap.dot(self.X.dot(self.weight) - self.cost) >= 1:
-            dw = 2 * self.l * self.weight
-            db = 0
-        else:
-            dw = 2 * self.l * self.weight - y_cap.dot(self.weight)
-            db = y_cap
+            condition = y_label[index] * (np.dot(x_i, self.weight) - self.cost) >= 1
 
-        self.weight = self.weight - self.rate * dw
-        self.cost = self.cost - self.rate * db
+            if (condition == True):
+
+                dw = 2 * self.lamb * self.weight
+                db = 0
+
+            else:
+
+                dw = 2 * self.lamb * self.weight - np.dot(x_i, y_label[index])
+                db = y_label[index]
+
+            self.weight = self.weight - self.rate * dw
+
+            self.cost = self.cost - self.rate * db
 
     def predict(self,X):
         op = np.dot(X, self.weight) - self.cost
